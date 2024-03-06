@@ -70,7 +70,7 @@ dtm_df
 # In[3]:
 
 
-def cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores):
+def cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, save_name):
 
     sns.set(style="darkgrid")
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
@@ -87,7 +87,7 @@ def cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_sco
     axes[1].set_title('Silhouette Score') 
     axes[1].set_xlabel('Number of clusters') 
     axes[1].set_ylabel('Silhouette Score')
-    
+    plt.savefig(save_name)
     plt.show()
 
 
@@ -114,7 +114,7 @@ for num_clust in range(min_cluster,max_cluster+1):
 # In[5]:
 
 
-cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores)
+cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/kmeans_clustering_scores_sparse_dtm.png')
 
 
 # ### Notes:
@@ -127,7 +127,7 @@ cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores)
 
 # ### i. Using TruncatedSVD
 
-# In[8]:
+# In[6]:
 
 
 from sklearn.decomposition import TruncatedSVD
@@ -140,7 +140,7 @@ explained_variance = lsa.explained_variance_ratio_.sum()
 print(f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
 
 
-# In[9]:
+# In[7]:
 
 
 lsa_df = pd.DataFrame(data = X_lsa, columns = ['lsa1', 'lsa2'])
@@ -149,6 +149,7 @@ plt.scatter(lsa_df['lsa1'],lsa_df['lsa2'])
 plt.xlabel('lsa1')
 plt.ylabel('lsa2')
 plt.title('TruncatedSVD (2 components)')
+plt.savefig('figs/2_component_lsa.png')
 plt.show()
 
 
@@ -160,7 +161,7 @@ plt.show()
 # 
 # - Lets see how the k-means clustering goes.
 
-# In[10]:
+# In[8]:
 
 
 from sklearn.decomposition import TruncatedSVD
@@ -193,15 +194,15 @@ for num_clust in range(min_cluster,max_cluster+1):
         print()
 
 
-# In[11]:
+# In[9]:
 
 
-cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores)
+cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/lsa_kmeans_scores.png')
 
 
 # ### ii. Using UMAP
 
-# In[12]:
+# In[10]:
 
 
 reducer = umap.UMAP(n_neighbors = 5, n_components = 2, metric = 'euclidean', min_dist = 0.05, spread = 1.0, random_state=42)
@@ -211,6 +212,10 @@ red1 = pd.DataFrame(data=projected_data, columns=['umap_1','umap_2'])
 display(red1)
 
 plt.scatter(red1['umap_1'],red1['umap_2'], alpha = 0.3)
+plt.title('UMAP 2-components')
+plt.xlabel('umap_1')
+plt.ylabel('umap_2')
+plt.savefig('figs/umap_2_component.png')
 plt.show()
 
 
@@ -218,7 +223,7 @@ plt.show()
 # 
 # 
 
-# In[13]:
+# In[11]:
 
 
 inertia_values = []
@@ -231,20 +236,25 @@ for num_clust in range(min_cluster,max_cluster+1):
     inertia_values.append(kmeans.inertia_)
     silhouette_scores.append(silhouette_score(projected_data, kmeans.labels_))
 
-cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores)
+cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/umap_kmeans_scores.png')
 
 
 # - The inertia scores don't show a clear elbow to decide number of clusters.
 # 
 # - The silhouette scores indicate that the number of clusters = 10.
 
-# In[14]:
+# In[12]:
 
 
 #Checking against the target- case_num
 
 plt.scatter(red1['umap_1'],red1['umap_2'], c=y, cmap='Spectral')
 plt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))
+plt.title('UMAP 2-component - with case num to cross check')
+plt.xlabel('umap_1')
+plt.ylabel('umap_2')
+plt.savefig('figs/umap_2component_with_case_num.png')
+plt.show()
 
 
 # - We can see that there is overlap in patient case_num from the clusters formed.
@@ -253,7 +263,7 @@ plt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))
 
 # ### Using T-SNE
 
-# In[15]:
+# In[13]:
 
 
 tsne = TSNE(n_components=2,  random_state = 42, init='random')
@@ -263,9 +273,14 @@ red2
 
 
 plt.scatter(red2['tsne1'],red2['tsne2'])
+plt.title('T-SNE 2-components')
+plt.xlabel('tsne_1')
+plt.ylabel('tsne_2')
+plt.savefig('figs/tsne_2components.png')
+plt.show()
 
 
-# In[16]:
+# In[14]:
 
 
 inertia_values = []
@@ -278,12 +293,52 @@ for num_clust in range(min_cluster,max_cluster+1):
     inertia_values.append(kmeans.inertia_)
     silhouette_scores.append(silhouette_score(tsne_result, kmeans.labels_))
 
-cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores)
+cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/tsne_kmeans_scores.png')
 
 
-# In[17]:
+# In[15]:
 
 
 plt.scatter(red2['tsne1'],red2['tsne2'], c=y, cmap='Spectral')
 plt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))
+plt.title('T-SNE 2-component - with case num to cross check')
+plt.xlabel('tsne_1')
+plt.ylabel('tsne_2')
+plt.savefig('figs/tsne_2component_with_case_num.png')
+plt.show()
+
+
+# In[16]:
+
+
+from sklearn.cluster import HDBSCAN
+import seaborn as sns
+
+hdb_tsne = HDBSCAN(min_cluster_size=500, min_samples = 100)
+cluster_labels = hdb_tsne.fit_predict(red2)
+
+plt.figure(figsize = (20,15))
+
+palette = sns.color_palette('dark', np.unique(cluster_labels).max() + 1)
+palette[7] = (0.8, 0.1, 0.1)
+palette[5] = (0.1, 0.3, 0.7)
+palette[3] = (0.5, 0.8, 0)
+palette[0] = (0, 0.8, 0.8)
+
+#plotting clusters
+for i in range(np.unique(cluster_labels).max() + 1):
+    plt.scatter(red2[cluster_labels == i]['tsne1'], red2[cluster_labels == i]['tsne2'], color = palette[i], label = f'Cluster {i+1}')
+
+#plotting noise
+plt.scatter(red2[cluster_labels == -1]['tsne1'], red2[cluster_labels == -1]['tsne2'], color = 'black', marker = 'x', label = f'Noise')
+
+
+plt.title('HDBSCAN Clustering (2D T-SNE)')
+plt.xlabel('tsne1')
+plt.ylabel('tsne2')
+plt.xlim(-80, 80)
+plt.ylim(-80, 80)
+plt.legend(loc = 'best', fontsize = 'medium', ncols =2)
+plt.savefig('figs/hdbscan_clusters.png')
+plt.show()
 

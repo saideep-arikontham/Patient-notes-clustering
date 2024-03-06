@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[48]:
+# In[1]:
 
 
 from collections import Counter
@@ -13,40 +13,41 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# In[49]:
+# In[2]:
 
 
 notes = pd.read_csv('data/processed_notes.csv')
 notes
 
 
-# In[56]:
+# In[3]:
 
 
-sns.histplot(notes['initial_note_length'], bins=50, kde=True, edgecolor='black')
-plt.title('Distribution of Document Lengths - before preprocessing')
-plt.xlabel('Document Length')
-plt.ylabel('Frequency')
+sns.set(style="darkgrid")
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(20, 10))
+
+
+sns.histplot(notes['initial_note_length'], bins=50, kde=True, edgecolor='black', ax = axes[0])
+axes[0].set_title('Distribution of Document Lengths - before preprocessing')
+axes[0].set_xlabel('Document Length')
+axes[0].set_ylabel('Frequency')
+
+sns.histplot(notes['processed_note_length'], bins=50, kde=True, edgecolor='black', ax = axes[1])
+axes[1].set_title('Distribution of Document Lengths - after preprocessing')
+axes[1].set_xlabel('Document Length')
+axes[1].set_ylabel('Frequency')
+
+plt.savefig('figs/document_length_frequency.png')
 plt.show()
 
 
-# In[57]:
-
-
-sns.histplot(notes['processed_note_length'], bins=50, kde=True, edgecolor='black')
-plt.title('Distribution of Document Lengths - after preprocessing')
-plt.xlabel('Document Length')
-plt.ylabel('Frequency')
-plt.show()
-
-
-# In[58]:
+# In[4]:
 
 
 notes[['initial_note_length', 'processed_note_length']].describe()
 
 
-# In[59]:
+# In[5]:
 
 
 def get_common_words(texts, num_words=10):
@@ -76,10 +77,11 @@ for i,j in data['processed_notes'].apply(lambda x: get_common_words(x, num_words
     axes[plot_row][plot_col].tick_params(labelrotation=45)
     axes[plot_row][plot_col].set_title(f'Most common words in Patient Case - {i} Notes (combined)')
 
+plt.savefig('figs/common_words_per_patient_case.png')
 plt.show()
 
 
-# In[60]:
+# In[6]:
 
 
 text_combined = ' '.join(data['processed_notes'])
@@ -91,10 +93,12 @@ wordcloud = WordCloud(width=800, height=400, random_state=21, max_font_size=110)
 plt.figure(figsize=(10, 7))
 plt.imshow(wordcloud, interpolation='bilinear')
 plt.axis('off')  # Turn off axis labels
+
+plt.savefig('figs/word_cloud_all_notes.png')
 plt.show()
 
 
-# In[61]:
+# In[7]:
 
 
 df = pd.DataFrame(data = get_common_words(text_combined, num_words = 20), columns = ['word', 'count'])
@@ -102,6 +106,7 @@ plt.figure(figsize = (20,15))
 plt.bar(df['word'], df['count'])
 #plt.xticks(rotation = 60)
 plt.title('Common words - in all texts combined')
+plt.savefig('figs/common_words_all_notes.png')
 plt.show()
 
 

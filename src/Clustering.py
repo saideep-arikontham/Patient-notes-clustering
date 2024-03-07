@@ -178,23 +178,10 @@ silhouette_scores = []
 for num_clust in range(min_cluster,max_cluster+1):
     kmeans = KMeans(n_clusters=num_clust, random_state=42, n_init='auto').fit(X_lsa)
     cluster_ids, cluster_sizes = np.unique(kmeans.labels_, return_counts=True)
-    print(f"Number of elements assigned to each cluster: {cluster_sizes}")
+    print(f"Number elements in {num_clust} clusters: {cluster_sizes}")
     
     inertia_values.append(kmeans.inertia_)
     silhouette_scores.append(silhouette_score(X_lsa, kmeans.labels_))
-
-    original_space_centroids = lsa.inverse_transform(kmeans.cluster_centers_)
-    order_centroids = original_space_centroids.argsort()[:, ::-1]
-    terms = vectorizer.get_feature_names_out()
-
-    for i in range(num_clust):
-        print(f"\tCluster {i}: ", end="")
-        for ind in order_centroids[i, :10]:
-            print(f"{terms[ind]} ", end="")
-        print()
-
-
-# In[9]:
 
 
 cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/lsa_kmeans_scores.png')
@@ -202,7 +189,7 @@ cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores,
 
 # ### ii. Using UMAP
 
-# In[10]:
+# In[9]:
 
 
 reducer = umap.UMAP(n_neighbors = 5, n_components = 2, metric = 'euclidean', min_dist = 0.05, spread = 1.0, random_state=42)
@@ -223,7 +210,7 @@ plt.show()
 # 
 # 
 
-# In[11]:
+# In[10]:
 
 
 inertia_values = []
@@ -243,17 +230,28 @@ cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores,
 # 
 # - The silhouette scores indicate that the number of clusters = 10.
 
-# In[12]:
+# In[11]:
 
 
-#Checking against the target- case_num
+#plotting for kmeans 10 clusters and Checking against the target- case_num
 
-plt.scatter(red1['umap_1'],red1['umap_2'], c=y, cmap='Spectral')
-plt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))
-plt.title('UMAP 2-component - with case num to cross check')
-plt.xlabel('umap_1')
-plt.ylabel('umap_2')
-plt.savefig('figs/umap_2component_with_case_num.png')
+kmeans = KMeans(n_clusters=10, random_state=42, n_init='auto').fit(projected_data)
+
+sns.set(style="darkgrid")
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
+
+axes[0].scatter(red1['umap_1'],red1['umap_2'], c=kmeans.labels_, cmap='Spectral')
+axes[0].set_title('UMAP 2-component - K-means')
+axes[0].set_xlabel('umap_1')
+axes[0].set_ylabel('umap_2')
+
+
+axes[1].scatter(red1['umap_1'],red1['umap_2'], c=y, cmap='Spectral')
+axes[1].set_title('UMAP 2-component - with case_num (target)')
+axes[1].set_xlabel('umap_1')
+axes[1].set_ylabel('umap_2')
+
+plt.savefig('figs/umap_kmeans_casenum.png')
 plt.show()
 
 
@@ -263,7 +261,7 @@ plt.show()
 
 # ### Using T-SNE
 
-# In[13]:
+# In[12]:
 
 
 tsne = TSNE(n_components=2,  random_state = 42, init='random')
@@ -280,7 +278,7 @@ plt.savefig('figs/tsne_2components.png')
 plt.show()
 
 
-# In[14]:
+# In[13]:
 
 
 inertia_values = []
@@ -296,19 +294,31 @@ for num_clust in range(min_cluster,max_cluster+1):
 cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, 'figs/tsne_kmeans_scores.png')
 
 
-# In[15]:
+# In[14]:
 
 
-plt.scatter(red2['tsne1'],red2['tsne2'], c=y, cmap='Spectral')
-plt.colorbar(boundaries=np.arange(11)-0.5).set_ticks(np.arange(10))
-plt.title('T-SNE 2-component - with case num to cross check')
-plt.xlabel('tsne_1')
-plt.ylabel('tsne_2')
-plt.savefig('figs/tsne_2component_with_case_num.png')
+#plotting for kmeans 10 clusters and Checking against the target- case_num
+
+kmeans = KMeans(n_clusters=10, random_state=42, n_init='auto').fit(tsne_result)
+
+sns.set(style="darkgrid")
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
+
+axes[0].scatter(red2['tsne1'],red2['tsne2'], c=kmeans.labels_, cmap='Spectral')
+axes[0].set_title('T-SNE 2-component -KMeans')
+axes[0].set_xlabel('tsne_1')
+axes[0].set_ylabel('tsne_2')
+
+
+axes[1].scatter(red2['tsne1'],red2['tsne2'], c=y, cmap='Spectral')
+axes[1].set_title('T-SNE 2-component - with case_num (target)')
+axes[1].set_xlabel('tsne_1')
+axes[1].set_ylabel('tsne_2')
+plt.savefig('figs/tnse_kmeans_casenum.png')
 plt.show()
 
 
-# In[16]:
+# In[15]:
 
 
 from sklearn.cluster import HDBSCAN
@@ -341,4 +351,10 @@ plt.ylim(-80, 80)
 plt.legend(loc = 'best', fontsize = 'medium', ncols =2)
 plt.savefig('figs/hdbscan_clusters.png')
 plt.show()
+
+
+# In[ ]:
+
+
+
 

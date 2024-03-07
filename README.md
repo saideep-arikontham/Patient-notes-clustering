@@ -76,7 +76,7 @@ T-SNE also gives 10 clusters (evaluated with silhouette scores) and when checked
 
 <img src="figs/tsne_kmeans_scores.png">
 
-<img src="figs/tsne_kmeans_casenum.png">
+<img src="figs/tnse_kmeans_casenum.png">
 
 ## Results - HDBSCAN
 

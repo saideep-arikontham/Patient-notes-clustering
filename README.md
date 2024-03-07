@@ -54,11 +54,43 @@ To tackle the curse of dimensionality are make it visualisable, I have tried dif
 
 ## Clustering
 
-- Need to complete
+The ideal number of cluster are identified using silhouette scores.
 
-## Results
+#### TruncatedSVD
 
-- Need to complete
+The silhouette scores of TruncatedSVD with Kmeans identifies the number of clusters as 7 which is incorrect, as there are 10 patients each with different problems.
+
+<img src="figs/lsa_kmeans_scores.png">
+
+#### UMAP
+
+From UMAP, the ideal number of clusters identified is 10 with the silhouette scores. This is the correct number. When checked with the clusters formed using KMeans labels against the actual target (case_num), they vary a bit (colors in the following plot do not matter, they just identify a unique group).
+
+<img src="figs/umap_kmeans_scores.png">
+
+<img src="figs/umap_kmeans_casenum.png">
+
+#### T-SNE
+
+T-SNE also gives 10 clusters (evaluated with silhouette scores) and when checked with the clusters formed using KMeans labels against the actual target (case_num), they are quite different.
+
+<img src="figs/tsne_kmeans_scores.png">
+
+<img src="figs/tsne_kmeans_casenum.png">
+
+## Results - HDBSCAN
+
+- The above results are not quite satisfying when KMeans is used. So, I used the result of T-SNE (which had 10 clear clusters - which is also indicated by the silhouette scores) along with HDBSCAN. This clustering technique identifies the ideal number of clusters by itself.
+
+- It identified 10 clusters along with noise. The following is the scatter plot of clusters identified. We can see that this output matches the T-SNE evaluated against target (case_num)
+
+<img src="figs/hdbscan_clusters.png">
+
+## Conclusion
+
+We can get the cluster center words from K-Means and then check against the keywords from each patient case. However, since the DTM is sparse, UMAP and T-SNE are throwing an error indicating the same. More filtering on TFIDF to reduce the number of features might solve this issue in the future.
+
+
 
 
 

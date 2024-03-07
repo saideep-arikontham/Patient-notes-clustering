@@ -88,7 +88,8 @@ T-SNE also gives 10 clusters (evaluated with silhouette scores) and when checked
 
 ## Conclusion
 
-We can get the cluster center words from K-Means and then check against the keywords from each patient case. However, since the DTM is sparse, UMAP and T-SNE are throwing an error indicating the same. More filtering on TFIDF to reduce the number of features might solve this issue in the future.
+- Since we already know that there are only 10 different patients, we can conclude that the clustering is very good. Each of these clusters point to a different patient. Since the clusters are separated, we can say that these patients, their problems and experiences are mutually exclusive. However, if we have all unique patients, then clusters formed might indicate different problems that they are facing (each medical condition having a cluster). That case would not be mutually exclusive and requires a lot more processing and modelling before identifying clusters and their meanings.
+- In this case, we can get the cluster center words from K-Means and then check against the keywords from each patient case. However, since the DTM is sparse, UMAP and T-SNE are throwing an error indicating the same. More filtering on TFIDF to reduce the number of features might solve this issue in the future.
 
 
 

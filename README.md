@@ -86,6 +86,23 @@ T-SNE also gives 10 clusters (evaluated with silhouette scores) and when checked
 
 <img src="figs/hdbscan_clusters.png">
 
+- This clustering solution has an Adjusted rand score of 0.9910386197500075. The following is the contingency matrix of the same:
+
+```
+[2210,    0,    0,    3,    3,    7,    0,    0,    0,    0],
+[   0,  793,    0,    0,    1,    0,    0,    0,    0,    0],
+[   0,    0, 1946,    0,    1,    0,    0,    3,    0,    0],
+[   0,    1,    0, 9343,   61,    0,    0,    0,    0,    0],
+[   0,    0,    3,    0, 5144,    8,    0,    0,    1,    1],
+[   0,    0,    1,    1,   25, 6568,    0,    2,    1,    3],
+[   0,    0,    0,    0,    0,    0, 1593,    0,    0,    0],
+[   0,    0,    1,    0,    1,    1,    0, 4045,    0,    0],
+[   0,    0,    0,    1,    9,    0,    0,    0, 4168,    0],
+[   0,    1,    0,    0,    6,    2,    0,    0,    0, 5074]]
+```
+
+- From the above, we can see that this is an almost perfect Clustering solution.
+
 ## Conclusion
 
 - Since we already know that there are only 10 different patients, we can conclude that the clustering is very good. Each of these clusters point to a different patient. Since the clusters are separated, we can say that these patients, their problems and experiences are mutually exclusive. However, if we have all unique patients, then clusters formed might indicate different problems that they are facing (each medical condition having a cluster). That case would not be mutually exclusive and requires a lot more processing and modelling before identifying clusters and their meanings.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[1]:
 
 
 import pandas as pd
@@ -29,7 +29,7 @@ notes
 # 
 # - Will have to consider the inclusion of processed_note_length and initial_note_length later.
 
-# In[8]:
+# In[2]:
 
 
 # setting X and y for modelling
@@ -67,7 +67,7 @@ dtm_df
 # 
 # 
 
-# In[9]:
+# In[3]:
 
 
 def cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_scores, save_name):
@@ -92,7 +92,7 @@ def cluster_score_plots(min_cluster, max_cluster, inertia_values, silhouette_sco
 
 
 
-# In[10]:
+# In[4]:
 
 
 min_cluster = 3
@@ -103,7 +103,7 @@ max_cluster = 14
 
 # ### i. Using TruncatedSVD
 
-# In[11]:
+# In[5]:
 
 
 from sklearn.decomposition import TruncatedSVD
@@ -116,7 +116,7 @@ explained_variance = lsa.explained_variance_ratio_.sum()
 print(f"Explained variance of the SVD step: {explained_variance * 100:.1f}%")
 
 
-# In[12]:
+# In[6]:
 
 
 lsa_df = pd.DataFrame(data = X_lsa, columns = ['lsa1', 'lsa2'])
@@ -137,7 +137,7 @@ plt.show()
 # 
 # - Lets see how the k-means clustering goes.
 
-# In[13]:
+# In[7]:
 
 
 from sklearn.decomposition import TruncatedSVD
@@ -170,7 +170,7 @@ print(f'- n_clusters account to Inertia scores are:', inertia_values.index(KneeL
 
 # ### ii. Using UMAP
 
-# In[52]:
+# In[8]:
 
 
 reducer = umap.UMAP(n_neighbors = 5, n_components = 2, metric = 'euclidean', min_dist = 0.05, spread = 1.0, random_state=42)
@@ -193,7 +193,7 @@ plt.show()
 
 # #### UMAP K-means
 
-# In[53]:
+# In[9]:
 
 
 inertia_values = []
@@ -218,7 +218,7 @@ print(f'- n_clusters account to Inertia scores are:', inertia_values.index(KneeL
 # 
 # - The silhouette scores indicate that the number of clusters = 10.
 
-# In[54]:
+# In[10]:
 
 
 #plotting for kmeans 10 clusters and Checking against the target- case_num
@@ -243,7 +243,7 @@ plt.savefig('figs/umap_kmeans_casenum.png')
 plt.show()
 
 
-# In[55]:
+# In[11]:
 
 
 from sklearn.metrics.cluster import adjusted_rand_score
@@ -272,7 +272,7 @@ contingency_matrix(y, relabeled_labels)
 
 # #### UMAP HDBSCAN
 
-# In[56]:
+# In[12]:
 
 
 from sklearn.cluster import HDBSCAN
@@ -307,7 +307,7 @@ plt.savefig('figs/hdbscan_clusters.png')
 plt.show()
 
 
-# In[65]:
+# In[13]:
 
 
 clustering_df = pd.DataFrame()
@@ -330,14 +330,14 @@ mapping = {6: 0,
 no_noise['y_pred'] = no_noise['y_pred'].replace(mapping)
 
 
-print('Adjusted rand score for the DBSCAN clustering solution:',adjusted_rand_score(no_noise['y'], no_noise['y_pred']))
+print('Adjusted rand score for the HDBSCAN clustering solution:',adjusted_rand_score(no_noise['y'], no_noise['y_pred']))
 print('Contingency matrix:')
 contingency_matrix(no_noise['y'], no_noise['y_pred'])
 
 
 # ### Using T-SNE
 
-# In[66]:
+# In[14]:
 
 
 tsne = TSNE(n_components=2,  random_state = 42, init='random')
@@ -356,7 +356,7 @@ plt.show()
 
 # #### T-SNE KMeans
 
-# In[67]:
+# In[15]:
 
 
 inertia_values = []
@@ -377,7 +377,7 @@ print(f'- Best silhouette score is observed at n_clusters = {min_cluster + silho
 print(f'- n_clusters account to Inertia scores are:', inertia_values.index(KneeLocator(inertia_values, list(range(min_cluster, max_cluster+1)), curve='convex', direction='decreasing').knee))
 
 
-# In[68]:
+# In[16]:
 
 
 #plotting for kmeans 10 clusters and Checking against the target- case_num
@@ -401,7 +401,7 @@ plt.savefig('figs/tnse_kmeans_casenum.png')
 plt.show()
 
 
-# In[69]:
+# In[17]:
 
 
 '''mapping = {6: 0, 
@@ -423,7 +423,7 @@ contingency_matrix(y, kmeans.labels_)
 
 # #### T-SNE HDBSCAN
 
-# In[70]:
+# In[18]:
 
 
 from sklearn.cluster import HDBSCAN
@@ -458,7 +458,7 @@ plt.savefig('figs/hdbscan_clusters.png')
 plt.show()
 
 
-# In[72]:
+# In[19]:
 
 
 clustering_df = pd.DataFrame()
@@ -480,7 +480,7 @@ mapping = {4: 0,
 no_noise['y_pred'] = no_noise['y_pred'].replace(mapping)
 
 
-print('Adjusted rand score for the DBSCAN clustering solution:',adjusted_rand_score(no_noise['y'], no_noise['y_pred']))
+print('Adjusted rand score for the HDBSCAN clustering solution:',adjusted_rand_score(no_noise['y'], no_noise['y_pred']))
 print('Contingency matrix:')
 contingency_matrix(no_noise['y'], no_noise['y_pred'])
 
